@@ -3,9 +3,12 @@
     <Header />
     <section class="wrap bg-black">
       <div class="container">
-        <arrow-back />
+        <arrow-back href="for-holders" />
         <h1 class="text-white text-semi-bold">
-          <img src="@/assets/images/uploadNew/download.svg" alt="Загрузить фильм" />
+          <img
+            src="@/assets/images/uploadNew/download.svg"
+            alt="Загрузить фильм"
+          />
           <span>Загрузить фильм</span>
         </h1>
         <div class="row">
@@ -14,12 +17,23 @@
               <div class="text-regular text-white p-SM">Название фильма</div>
               <div class="text-regular text-white p-SM">Жанр</div>
               <div class="text-regular text-white p-SM">Загрузить фильм</div>
+              <div class="text-regular text-white p-SM">
+                Загрузить изображение
+              </div>
               <div class="text-regular text-white p-SM">Формат</div>
               <div class="text-regular text-white p-SM">Длительность</div>
               <div class="text-regular text-white p-SM">Описание</div>
             </div>
             <div class="right">
-              <div class="input-wrap input-wrap-mobile text-regular text-white p-SM">Название фильма</div>
+              <div
+                class="
+                  input-wrap input-wrap-mobile
+                  text-regular text-white
+                  p-SM
+                "
+              >
+                Название фильма
+              </div>
               <div class="input-wrap">
                 <input
                   v-model="name"
@@ -28,7 +42,15 @@
                   placeholder="Введите название"
                 />
               </div>
-              <div class="input-wrap input-wrap-mobile text-regular text-white p-SM">Жанр</div>
+              <div
+                class="
+                  input-wrap input-wrap-mobile
+                  text-regular text-white
+                  p-SM
+                "
+              >
+                Жанр
+              </div>
 
               <div class="input-wrap">
                 <input
@@ -38,17 +60,71 @@
                   placeholder="Введите название жанра"
                 />
               </div>
-              <div class="input-wrap input-wrap-mobile text-regular text-white p-SM">Загрузить фильм</div>
+              <div
+                class="
+                  input-wrap input-wrap-mobile
+                  text-regular text-white
+                  p-SM
+                "
+              >
+                Загрузить фильм
+              </div>
 
               <div class="input-wrap text-regular text-gray p-SM">
-                <span id="text">{{file}}</span>
-                <img id="file-icon" src="@/assets/images/uploadNew/file.svg" alt="Загрузить файл" />
-                <input @change="setFile" type="file" id="file" />
+                <span id="text">{{ file }}</span>
+                <img
+                  id="file-icon"
+                  src="@/assets/images/uploadNew/file.svg"
+                  alt="Загрузить файл"
+                />
+                <input
+                  @change="setFile"
+                  type="file"
+                  id="file"
+                  ref="video"
+                  accept="video/*"
+                />
               </div>
-              <div class="input-wrap input-wrap-mobile text-regular text-white p-SM">Формат</div>
 
+              <div
+                class="
+                  input-wrap input-wrap-mobile
+                  text-regular text-white
+                  p-SM
+                "
+              >
+                Загрузить изображение
+              </div>
+              <div class="input-wrap text-regular text-gray p-SM">
+                <span id="text">{{ image }}</span>
+                <img
+                  id="file-icon"
+                  src="@/assets/images/uploadNew/file.svg"
+                  alt="Загрузить файл"
+                />
+                <input
+                  @change="setImage"
+                  type="file"
+                  id="file"
+                  ref="image"
+                  accept="image/*"
+                />
+              </div>
+
+              <div
+                class="
+                  input-wrap input-wrap-mobile
+                  text-regular text-white
+                  p-SM
+                "
+              >
+                Формат
+              </div>
               <div class="dark">
-                <div class="input-wrap select dark" :class="{ 'show-dropdown': showDropdown }">
+                <div
+                  class="input-wrap select dark"
+                  :class="{ 'show-dropdown': showDropdown }"
+                >
                   <div class="dropdown">
                     <svg
                       @click="showDropdown = !showDropdown"
@@ -67,21 +143,54 @@
                     <div class="title text-regular text-white p-SM">
                       <span
                         v-if="type !== '2 D'"
-                        @click="type = '2 D'; showDropdown = false"
-                      >{{type}}</span>
+                        @click="
+                          type = '2 D';
+                          showDropdown = false;
+                        "
+                        >{{ type }}</span
+                      >
                       <span
                         v-if="type !== '3 D'"
-                        @click="type = '3 D'; showDropdown = false"
-                      >{{type}}</span>
+                        @click="
+                          type = '3 D';
+                          showDropdown = false;
+                        "
+                        >{{ type }}</span
+                      >
                     </div>
                   </div>
-                  <div v-if="showDropdown" class="dropdown text-regular text-white p-SM">
-                    <span v-if="type !== '2 D'" @click="type = '2 D'; showDropdown = false">2 D</span>
-                    <span v-if="type !== '3 D'" @click="type = '3 D'; showDropdown = false">3 D</span>
+                  <div
+                    v-if="showDropdown"
+                    class="dropdown text-regular text-white p-SM"
+                  >
+                    <span
+                      v-if="type !== '2 D'"
+                      @click="
+                        type = '2 D';
+                        showDropdown = false;
+                      "
+                      >2 D</span
+                    >
+                    <span
+                      v-if="type !== '3 D'"
+                      @click="
+                        type = '3 D';
+                        showDropdown = false;
+                      "
+                      >3 D</span
+                    >
                   </div>
                 </div>
               </div>
-              <div class="input-wrap input-wrap-mobile text-regular text-white p-SM">Длительность</div>
+              <div
+                class="
+                  input-wrap input-wrap-mobile
+                  text-regular text-white
+                  p-SM
+                "
+              >
+                Длительность
+              </div>
 
               <div class="dark">
                 <div class="input-wrap">
@@ -94,7 +203,15 @@
                   <span class="text-white text-regular p-SM">мин.</span>
                 </div>
               </div>
-              <div class="input-wrap input-wrap-mobile text-regular text-white p-SM">Описание</div>
+              <div
+                class="
+                  input-wrap input-wrap-mobile
+                  text-regular text-white
+                  p-SM
+                "
+              >
+                Описание
+              </div>
               <div class="dark">
                 <div class="input-wrap textarea">
                   <textarea
@@ -107,7 +224,12 @@
               </div>
             </div>
           </form>
-          <Btn fluid text="Загрузить" :disabled="btnDisabled" />
+          <Btn
+            fluid
+            text="Загрузить"
+            :disabled="btnDisabled"
+            @click.native="saveToDB"
+          />
         </div>
         <router-link to class="link">
           <div class="btn-decor">
@@ -127,6 +249,7 @@ import Footer from "@/components/Footer";
 import ArrowBack from "@/components/ArrowBack";
 import Btn from "@/components/Btn";
 import SettingsIcon from "@/assets/images/cinema-for-halls-page/settings_icon.svg";
+import axios from "axios";
 
 export default {
   components: { Header, Footer, ArrowBack, Btn },
@@ -136,16 +259,28 @@ export default {
     name: "",
     genre: "",
     file: "Выберите фильм",
+    image: "Выберите картину",
     time: "",
     overview: "",
     type: "2 D", //or '3 D',
     btnDisabled: true,
+    // genre should be multiple select with genres.title as option, genres.id as option value, genres_id as model
+    genres_id: [],
+    genres: [],
   }),
+  mounted() {
+    this.getGenres();
+  },
   methods: {
     setFile(e) {
       var file = e.target.files || e.dataTransfer.files;
       if (!file.length) return;
-      this.file = file[0].name
+      this.file = file[0].name;
+    },
+    setImage(e) {
+      var image = e.target.files || e.dataTransfer.files;
+      if (!image.length) return;
+      this.image = image[0].name;
     },
     validate() {
       if (
@@ -158,6 +293,41 @@ export default {
       } else {
         this.btnDisabled = true;
       }
+    },
+    getGenres() {
+      axios
+        .post("/api/genres")
+        .then((res) => {
+          this.genres = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    saveToDB() {
+      var format_id = this.type == "2 D" ? "1" : "2";
+      var fData = new FormData();
+
+      fData.append("image", this.$refs.image.files[0]);
+      fData.append("file", this.$refs.video.files[0]);
+      fData.append("token", this.$store.getters.getAuthToken);
+      fData.append("title", this.name);
+      fData.append("description", this.overview);
+      fData.append("duration", this.time);
+      fData.append("format_id", format_id);
+      fData.append("genres_id", this.genres_id);
+
+      axios
+        .post("/api/films/store", fData)
+        .then((res) => {
+          this.$router.push("/cinema").catch(() => {});
+        })
+        .catch((err) => {
+          if (err.response.status == 422) {
+            console.log("validaion error");
+          }
+          console.log(err);
+        });
     },
   },
 };

@@ -5,7 +5,7 @@ import store from "./store";
 import './assets/scss/main.scss';
 import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
-
+Vue.use(require('vue-moment'));
 Vue.config.productionTip = false;
 
 new Vue({

@@ -9,28 +9,40 @@
           placeholder="email"
           class="phone text-white text-semi-bold h3"
         />
+        <!-- <small class="error" v-if="larerrors.login">
+          <i>{{ larerrors.login }}</i>
+        </small> -->
       </div>
     </div>
 
     <div class="sms-wrap" v-if="showSms">
       <input
         v-model="$v.sms.$model"
-        placeholder="sms-код"
+        placeholder="email-код"
         type="tel"
         class="sms text-white text-semi-bold h3"
       />
+      <!-- <small class="error" v-if="larerrors.sms">
+        <i>{{ larerrors.sms }}</i>
+      </small> -->
       <div @click="sendSmsAgain" class="timer text-gray text-regular">
         {{
-        Number(seconds)
-        ? `${Math.floor((seconds / 60) % 60)}:${(
-        "0" +
-        (seconds % 60)
-        ).slice(-2)}`
-        : seconds
+          Number(seconds)
+            ? `${Math.floor((seconds / 60) % 60)}:${(
+                "0" +
+                (seconds % 60)
+              ).slice(-2)}`
+            : seconds
         }}
       </div>
     </div>
-    <button @click="submit" :disabled="$v.email.$error" class="next text-white text-semi-bold">Далее</button>
+    <button
+      @click="submit"
+      :disabled="$v.email.$error"
+      class="next text-white text-semi-bold"
+    >
+      Далее
+    </button>
 
     <div v-if="showSms" class="why text-gray text-regular">
       <span @click="showModal = !showModal">Не приходит код?</span>
@@ -46,9 +58,9 @@
               2. Вы не изменили в личном кабинете адрес почты на новый, и мы
               отправили код на старый. Обратитесь в службу поддержки через
               электронную почту
-              <a
-                href="mailto:support@extrafintech.com"
-              >support@extrafintech.com</a>
+              <a href="mailto:support@extrafintech.com"
+                >support@extrafintech.com</a
+              >
               или позвоните по номеру
               <a href="tel:+79951317777">+7 995 131 77 77</a>
             </li>
@@ -71,6 +83,7 @@ import {
   email,
   numeric,
 } from "vuelidate/lib/validators";
+import axios from "axios";
 
 export default {
   data: () => ({
@@ -79,6 +92,7 @@ export default {
     showSms: false,
     seconds: 180,
     showModal: false,
+    larerrors: "",
   }),
   validations: {
     email: {
@@ -104,9 +118,21 @@ export default {
       }
     },
     sendSmsAgain() {
-      //some api call
+      axios
+        .post("/api/auth/step-1", {
+          email: this.email,
+        })
+        .then((res) => {
+          this.$emit("changeTitle", "Подтвердите Эл. адрес");
+          this.showSms = true;
+          this.countDownTimer();
+        })
+        .catch((err) => {
+          if (err.response.status == 422) {
+            this.larerrors = err.response.data.errors;
+          }
+        });
       this.seconds = 180;
-      this.countDownTimer();
     },
     submit() {
       if (!this.showSms) {
@@ -114,11 +140,31 @@ export default {
         if (this.$v.email.$invalid) {
           console.log("error");
         } else {
-          this.$emit("changeTitle", "Подтвердите E-Mail");
-          this.showSms = true;
-          this.countDownTimer();
+          this.sendSmsAgain();
         }
+      } else {
+        axios
+          .post("/api/auth/step-2", {
+            sms: this.sms,
+            email: this.email,
+          })
+          .then((res) => {
+            this.login(res);
+          })
+          .catch((err) => {
+            localStorage.removeItem("user-token");
+            if (err.response.status == 401) {
+              this.larerrors = err.response.data.errors;
+            } else if (err.response.status == 422) {
+              this.larerrors = err.response.data.errors;
+            }
+          });
       }
+    },
+    login(res) {
+      this.$store.commit("setAuthToken", res.data.token);
+      localStorage.setItem("user-token", res.data.token);
+      this.$router.push("/cinema").catch(() => {});
     },
   },
 };

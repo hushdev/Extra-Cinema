@@ -4,7 +4,10 @@
       <div class="select text-white text-semi-bold">
         <span @click="showAll = !showAll" class="h3" v-if="!showSms">
           <template v-if="selected">{{ selected.code }}</template>
-          <img src="@/assets/images/auth/arrow.svg" :class="{ rotate: showAll }" />
+          <img
+            src="@/assets/images/auth/arrow.svg"
+            :class="{ rotate: showAll }"
+          />
         </span>
         <transition name="urlChanged">
           <div class="options-wrap" v-if="showAll">
@@ -14,7 +17,9 @@
                 :key="idx"
                 class="option text-white text-regular p"
                 @click="selectItem(item)"
-              >{{ item.value }}</div>
+              >
+                {{ item.value }}
+              </div>
             </div>
           </div>
         </transition>
@@ -26,6 +31,9 @@
           :disabled="showSms"
           class="phone text-white text-semi-bold h3"
         />
+        <!-- <small class="error" v-if="larerrors.login">
+          <i>{{ larerrors.login }}</i>
+        </small> -->
       </div>
     </div>
 
@@ -36,18 +44,27 @@
         type="tel"
         class="sms text-white text-semi-bold h3"
       />
+      <!-- <small class="error" v-if="larerrors.sms">
+        <i>{{ larerrors.sms }}</i>
+      </small> -->
       <div @click="sendSmsAgain" class="timer text-gray text-regular">
         {{
-        Number(seconds)
-        ? `${Math.floor((seconds / 60) % 60)}:${(
-        "0" +
-        (seconds % 60)
-        ).slice(-2)}`
-        : seconds
+          Number(seconds)
+            ? `${Math.floor((seconds / 60) % 60)}:${(
+                "0" +
+                (seconds % 60)
+              ).slice(-2)}`
+            : seconds
         }}
       </div>
     </div>
-    <button @click="submit" :disabled="$v.phone.$error" class="next text-white text-semi-bold">Далее</button>
+    <button
+      @click="submit"
+      :disabled="$v.phone.$error"
+      class="next text-white text-semi-bold"
+    >
+      Далее
+    </button>
 
     <div v-if="showSms" class="why text-gray text-regular">
       <span @click="showModal = !showModal">Не приходит код?</span>
@@ -63,9 +80,9 @@
               2. Вы не изменили в личном кабинете номер мобильного телефона на
               новый, и мы отправили код на старый. Обратитесь в службу поддержки
               через электронную почту
-              <a
-                href="mailto:support@extrafintech.com"
-              >support@extrafintech.com</a>
+              <a href="mailto:support@extrafintech.com"
+                >support@extrafintech.com</a
+              >
               или позвоните по номеру
               <a href="tel:+79951317777">+7 995 131 77 77</a>
             </li>
@@ -88,6 +105,7 @@ import {
   maxLength,
   numeric,
 } from "vuelidate/lib/validators";
+import axios from "axios";
 
 export default {
   data: () => ({
@@ -99,6 +117,7 @@ export default {
     showSms: false,
     seconds: 180,
     showModal: false,
+    larerrors: "",
   }),
   validations: {
     phone: {
@@ -134,9 +153,25 @@ export default {
       }
     },
     sendSmsAgain() {
-      //some api call
+      axios
+        .post("/api/auth/step-1", {
+          code: this.selected.phoneCode,
+          phone: this.phone,
+        })
+        .then((res) => {
+          // // DELETE THIS BLOCK
+          // this.login(res);
+          // return;
+          this.$emit("changeTitle", "Подтвердите телефон");
+          this.showSms = true;
+          this.countDownTimer();
+        })
+        .catch((err) => {
+          if (err.response.status == 401) {
+            this.larerrors = err.response.data.errors;
+          }
+        });
       this.seconds = 180;
-      this.countDownTimer();
     },
     submit() {
       if (!this.showSms) {
@@ -144,11 +179,30 @@ export default {
         if (this.$v.phone.$invalid) {
           console.log("error");
         } else {
-          this.$emit("changeTitle", "Подтвердите телефон");
-          this.showSms = true;
-          this.countDownTimer();
+          this.sendSmsAgain();
         }
+      } else {
+        axios
+          .post("/api/auth/step-2", {
+            sms: this.sms,
+            phone: this.phone,
+            code: this.selected.phoneCode,
+          })
+          .then((res) => {
+            this.login(res);
+          })
+          .catch((err) => {
+            localStorage.removeItem("user-token");
+            if (err.response.status == 401 || err.response.status == 422) {
+              this.larerrors = err.response.data.errors;
+            }
+          });
       }
+    },
+    login(res) {
+      this.$store.commit("setAuthToken", res.data.token);
+      localStorage.setItem("user-token", res.data.token);
+      this.$router.push("/cinema").catch(() => {});
     },
   },
 };

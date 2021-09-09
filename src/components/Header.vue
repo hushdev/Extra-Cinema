@@ -19,10 +19,11 @@
         </li>
       </ul>
       <div class="buttons">
-        <router-link :to="{name: 'ec-login'}" class="enter-btn text-semi-bold text-white">
+        <router-link v-if="!this.$store.getters.getAuthToken" :to="{name: 'ec-login'}" class="enter-btn text-semi-bold text-white">
           Войти
           <img src="../assets/images/header/enter.svg" alt="Login" />
         </router-link>
+        <LogoutBtn v-else class="enter-btn text-semi-bold text-white"/>
         <button class="menu-btn" @click="toggleMenu">
           <img src="../assets/images/header/burger.svg" alt="Menu" />
         </button>
@@ -40,10 +41,10 @@
 
 <script>
 import Menu from "@/components/Menu";
+import LogoutBtn from "@/components/LogoutBtn";
 export default {
   name: "Header",
   props: {
-    //somewhere header has 100% width, somewhere this value is limited
     fluid: {
       required: false,
       type: Boolean,
@@ -66,7 +67,7 @@ export default {
       this.menuActive = !this.menuActive;
     },
   },
-  components: { Menu },
+  components: { Menu, LogoutBtn },
 };
 </script>
 
